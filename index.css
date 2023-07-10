@@ -1,0 +1,32 @@
+
+.fullscreen {
+  margin: 0px;
+  padding: 0px;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+html, body {
+  overflow: hidden;
+  font-family: 'Lunarie', sans-serif;
+  color: #2f2f2f;
+}
+
+
+
+/* Canvas */
+
+.container {
+  width: calc(100vw - 15px);
+  height: calc(100vh - 15px);
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.canvas {
+  border-radius: 10px;
+}
