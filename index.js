@@ -12,7 +12,6 @@ camera,
 controls,
 renderer,
 noise2d,
-noise3d,
 rocket,
 sparkMeshes,
 allTiles,
@@ -32,7 +31,8 @@ sandHeight,
 shallowWaterHeight,
 waterHeight,
 deepWaterHeight,
-textures;
+textures,
+allAsteroids;
 
 const setScene = async () => {
 
@@ -44,8 +44,8 @@ const setScene = async () => {
   scene             = new THREE.Scene();
   scene.background  = new THREE.Color(0xf5e6d3);
 
-  camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 600);
-  camera.position.set(0, 0, 80);
+  camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 800);
+  camera.position.set(0, 200, 120);
   
   renderer = new THREE.WebGLRenderer({
     canvas:     canvas,
@@ -55,14 +55,14 @@ const setScene = async () => {
 
   scene.add(new THREE.HemisphereLight(0xffffbb, 0x080820, 1.7));
 
-  sparkMeshes = [];
-  noise2d     = openSimplexNoise.makeNoise2D(Date.now());
-  noise3d     = openSimplexNoise.makeNoise3D(Date.now());
+  sparkMeshes   = [];
+  noise2d       = openSimplexNoise.makeNoise2D(Date.now());
+  allAsteroids  = [];
 
   setControls();
   setTerrainValues();
   createRocket();
-  createAsteroid();
+  asteroidEngine();
   createInitTiles();
   tileEngine();
   resize();
@@ -75,6 +75,8 @@ const setControls = () => {
 
   controls                = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping  = true;
+  controls.target.y       = 200;
+  controls.update();
 
 };
 
@@ -82,7 +84,6 @@ const setTerrainValues = () => {
 
   allTiles            = new THREE.Group();
   allTiles.rotation.z = (Math.PI / 6) * 13.5;
-  allTiles.position.y = -180;
   centerTileFromTo    = 12;
   centerTile = {
     xFrom:  -centerTileFromTo,
@@ -316,9 +317,17 @@ const createRocket = async () => {
   createLegs();
   createspark();
 
-  rocket.position.set(-8, 0, 0);
+  rocket.position.set(-8, 200, 0);
   rocket.rotation.y = (Math.PI / 2) * 3;
   scene.add(rocket);
+
+}
+
+const asteroidEngine = () => {
+
+  setInterval(() => {
+    createAsteroid();
+  }, 3000);
 
 }
 
@@ -328,6 +337,7 @@ const createAsteroid = () => {
   const asteroidGeo = new THREE.IcosahedronGeometry(1, 0);
   const vec         = new THREE.Vector3();
   const pos         = asteroidGeo.attributes.position;
+  const noise3d     = openSimplexNoise.makeNoise3D(Math.random() * 100);
 
   for(let i = 0; i < pos.count; i++) {
 
@@ -350,10 +360,15 @@ const createAsteroid = () => {
     color: 0x6e6e6e
   });
 
-  const asteroidMesh = new THREE.Mesh(asteroidGeo, asteroidMat);
-  asteroidMesh.position.set(-32, 0, 0);
+  const asteroidMesh  = new THREE.Mesh(asteroidGeo, asteroidMat);
+  const asteroidGroup = new THREE.Group();
+  asteroidGroup.add(asteroidMesh);
 
-  scene.add(asteroidMesh);
+  asteroidMesh.position.set(0, 220, 0);
+  asteroidGroup.rotation.z = (Math.PI / 4) * 6.5;
+
+  allAsteroids.push(asteroidGroup);
+  scene.add(asteroidGroup);
 
 }
 
@@ -365,16 +380,6 @@ const createInitTiles = () => {
 }
 
 const tileEngine = () => {
-
-  const cleanUp = (obj) => {
-
-    obj.geometry.dispose();
-    obj.material.dispose();
-  
-    allTiles.remove(obj);
-    renderer.renderLists.dispose();
-  
-  }
 
   setInterval(() => {
 
@@ -460,6 +465,27 @@ const createTile = () => {
 
 }
 
+const cleanUp = (obj) => {
+
+  if(obj.geometry && obj.material) {
+    obj.geometry.dispose();
+    obj.material.dispose();
+  }
+  else {
+    obj.traverse(el => {
+      if(el.isMesh) {
+        el.geometry.dispose();
+        el.material.dispose();
+      }
+    });
+  }
+
+  allTiles.remove(obj);
+  scene.remove(obj);
+  renderer.renderLists.dispose();
+
+}
+
 const resize = () => {
 
   sizes = {
@@ -490,10 +516,24 @@ const flamesAnimation = () => {
 
 }
 
+const asteroidAnimation = () => {
+  
+  for(const asteroid of allAsteroids) {
+    if(asteroid.rotation.z < 7.5) {
+      asteroid.rotation.z += 0.003;
+      asteroid.children[0].rotation.z -= 0.05;
+      asteroid.children[0].rotation.y -= 0.05;
+    }
+    else cleanUp(asteroid);
+  }
+
+}
+
 const render = () => {
 
   flamesAnimation();
-  allTiles.rotation.z += 0.0033;
+  asteroidAnimation();
+  allTiles.rotation.z += 0.00295;
   renderer.render(scene, camera);
   requestAnimationFrame(render.bind(this))
 
