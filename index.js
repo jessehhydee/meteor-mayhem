@@ -374,7 +374,7 @@ const createAsteroid = () => {
 
 const createInitTiles = () => {
 
-  for (let i = 0; i < 6; i++) nextTile();
+  for(let i = 0; i < 6; i++) nextTile();
   scene.add(allTiles);
 
 }
@@ -413,8 +413,9 @@ const createTile = () => {
     return new THREE.Vector3((tileX + (tileY % 2) * 0.5) * 1.68, 150, tileY * 1.535);
   }
 
-  const setHexMesh = (geo) => {
+  const setHexMesh = () => {
 
+    const geo   = new THREE.CylinderGeometry(1, 1, 1, 6, 1, false);
     const mat   = new THREE.MeshStandardMaterial();
     const mesh  = new THREE.InstancedMesh(geo, mat, amountOfHexInTile);
     mesh.rotation.z = ((Math.PI * 2) / 24) * tileAngle;
@@ -426,8 +427,7 @@ const createTile = () => {
   let hexCounter        = 0;
   const hexManipulator  = new THREE.Object3D();
 
-  const geo = new THREE.CylinderGeometry(1, 1, 1, 6, 1, false);
-  const hex = setHexMesh(geo);
+  const hex = setHexMesh();
   hex.name  = tileName;
 
   for(let i = centerTile.xFrom, ogI = -centerTileFromTo; i <= centerTile.xTo; i++, ogI++) {
@@ -462,6 +462,23 @@ const createTile = () => {
   }
 
   allTiles.add(hex);
+
+}
+
+const createStars = () => {
+
+  const amountOfStars   = 1000;
+  const starManipulator = new THREE.Object3D();
+
+  const geo       = new THREE.BoxGeometry(1, 1, 1);
+  const mat       = new THREE.MeshStandardMaterial();
+  const starMesh  = new THREE.InstancedMesh(geo, mat, amountOfStars);
+
+  for(let i = 0; i < amountOfStars; i++) {
+
+    
+
+  }
 
 }
 
