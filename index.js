@@ -34,7 +34,11 @@ deepWaterHeight,
 textures,
 allAsteroids,
 stars,
-mousePos;
+mousePos,
+distance,
+distanceEl,
+asteroidSpeed,
+asteroidSpeedTimeout;
 
 const setScene = async () => {
 
@@ -67,6 +71,9 @@ const setScene = async () => {
     x: 0, 
     y: 0
   };
+  distance      = 0;
+  distanceEl    = document.querySelector('.distance');
+  asteroidSpeed = 3000;
 
   setControls();
   setTerrainValues();
@@ -334,9 +341,20 @@ const createRocket = async () => {
 
 const asteroidEngine = () => {
 
-  setInterval(() => {
+  // setInterval(() => {
+  //   createAsteroid();
+  // }, 3000 * (1 + (distance / 10)));
+
+  if(asteroidSpeedTimeout) clearTimeout(asteroidSpeedTimeout);
+
+  const interval = () => {
+
     createAsteroid();
-  }, 3000);
+    asteroidSpeedTimeout = setTimeout(interval, asteroidSpeed);
+    
+  }
+
+  interval();
 
 }
 
@@ -619,11 +637,20 @@ const asteroidAnimation = () => {
 
 }
 
+const setDistance = () => {
+  
+  distance++;
+  distanceEl.textContent = distance;
+  if(distance % 200 === 0 && asteroidSpeed > 500) asteroidSpeed -= 250;
+
+}
+
 const render = () => {
 
   updateRocket();
   flamesAnimation();
   asteroidAnimation();
+  setDistance();
 
   allTiles.rotation.z += 0.005;
   stars.rotation.z    += 0.0005;

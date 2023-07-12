@@ -25,10 +25,23 @@ html, body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(2200px 1800px at 50% 140%, #5dc8f2 0, #5dc8f2 20%, #212121 40%, #212121 100%);
+  background: radial-gradient(2200px 1800px at 50% 140%, #5dc8f2 0, #5dc8f2 20%, #181818 40%, #000000 100%);
   border-radius: 10px;
 }
 
 .canvas {
   border-radius: 10px;
+}
+
+.distance-container {
+  position: absolute;
+  top: 10px;
+  left: 40px;
+  z-index: 10;
+  width: fit-content;
+}
+
+.distance {
+  font-size: 30px;
+  color: antiquewhite;
 }
