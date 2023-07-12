@@ -32,7 +32,8 @@ shallowWaterHeight,
 waterHeight,
 deepWaterHeight,
 textures,
-allAsteroids;
+allAsteroids,
+stars;
 
 const setScene = async () => {
 
@@ -42,7 +43,7 @@ const setScene = async () => {
   };
 
   scene             = new THREE.Scene();
-  scene.background  = new THREE.Color(0xf5e6d3);
+  scene.background  = new THREE.Color(0x212121);
 
   camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 800);
   camera.position.set(0, 200, 120);
@@ -473,7 +474,7 @@ const createStars = () => {
 
   const randomPointCircle = (radius) => {
  
-    const r = THREE.MathUtils.randFloat(0.5 * radius, 1.2 * radius);
+    const r = THREE.MathUtils.randFloat(0.7 * radius, 1.2 * radius);
     const phi = THREE.MathUtils.randFloat(0, Math.PI * 2);
     
     vec.x = r * Math.cos(phi);
@@ -483,24 +484,24 @@ const createStars = () => {
     
   }
 
-  const amountOfStars = 5000;
-  const stargeo       = new THREE.BufferGeometry();
+  const amountOfStars = 4000;
+  const starGeo       = new THREE.BufferGeometry();
   const positions     = [];
   
   for (var i = 0; i < amountOfStars; i ++ ) {
-    var vertex = randomPointCircle(300);
+    var vertex = randomPointCircle(260);
     positions.push(vertex.x, vertex.y, 0);
   }
   
-  stargeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
   const starMat = new THREE.PointsMaterial({ 
     color: 0xffffff,
-    size: 0.1 
+    size: 0.2 
   });
-  const particles = new THREE.Points(stargeo, starMat);
+  stars = new THREE.Points(starGeo, starMat);
 
-  scene.add(particles);
+  scene.add(stars);
 
 }
 
@@ -573,6 +574,7 @@ const render = () => {
   flamesAnimation();
   asteroidAnimation();
   allTiles.rotation.z += 0.00295;
+  stars.rotation.z += 0.0005;
   renderer.render(scene, camera);
   requestAnimationFrame(render.bind(this))
 
