@@ -466,59 +466,41 @@ const createTile = () => {
 
 }
 
-// https://gist.github.com/spaids/7b25b89b856c033c673b450cd390e01d
 // https://discourse.threejs.org/t/create-circle-with-fuzzy-edge-made-of-individual-random-particles/30150/2
 const createStars = () => {
 
-  const v = new THREE.Vector3();
+  const vec = new THREE.Vector3();
 
-  const randomPointInSphere = (radius) => {
-
-    const x = THREE.MathUtils .randFloat( -1, 1 );
-    const y = THREE.MathUtils .randFloat( -1, 1 );
-    //const z = THREE.Math.randFloat( -1, 1 );
-    const normalizationFactor = 1 / Math.sqrt( x * x + y * y );
-  
-    v.x = x * normalizationFactor * THREE.Math.randFloat( 0.5 * radius, 1.2 * radius );
-    v.y = y * normalizationFactor *  THREE.Math.randFloat( 0.5 * radius, 1.2 * radius );
-    v.z = 0; // z * normalizationFactor * radius;
-  
-    return v;
-
-  }
-
-  function randomPointCircle(radius) {
+  const randomPointCircle = (radius) => {
  
-    const r = THREE.MathUtils .randFloat( 0.5 * radius, 1.2 * radius );
-    const phi =  THREE.MathUtils .randFloat( 0, Math.PI * 2 );
+    const r = THREE.MathUtils.randFloat(0.5 * radius, 1.2 * radius);
+    const phi = THREE.MathUtils.randFloat(0, Math.PI * 2);
     
-    v.x = r * Math.cos( phi );
-    v.y = r * Math.sin( phi );
+    vec.x = r * Math.cos(phi);
+    vec.y = r * Math.sin(phi);
     
-    return v;
+    return vec;
     
   }
 
-  const geometry = new THREE.BufferGeometry();
+  const amountOfStars = 5000;
+  const stargeo       = new THREE.BufferGeometry();
+  const positions     = [];
   
-  var positions = [];
-  
-  for (var i = 0; i < 5000; i ++ ) {
-    
-    // var vertex = randomPointInSphere(50);
-    var vertex = randomPointCircle(50);
+  for (var i = 0; i < amountOfStars; i ++ ) {
+    var vertex = randomPointCircle(300);
     positions.push(vertex.x, vertex.y, 0);
-    
   }
   
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  stargeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-  let material = new THREE.PointsMaterial({ 
-    color: 0xff00ff,
+  const starMat = new THREE.PointsMaterial({ 
+    color: 0xffffff,
     size: 0.1 
   });
-  let particles = new THREE.Points(geometry, material);
-  scene.add( particles );
+  const particles = new THREE.Points(stargeo, starMat);
+
+  scene.add(particles);
 
 }
 
