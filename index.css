@@ -28,7 +28,7 @@ html, body {
   /* background: radial-gradient(2200px 1800px at 50% 140%, #5dc8f2 0, #5dc8f2 20%, #181818 40%, #000000 100%); */
   background: 
     radial-gradient(2200px 1800px at 50% 140%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
-    linear-gradient(90deg, #9E84C5 0%, #9E84C5 40%, #5dc8f2 100%);
+    linear-gradient(90deg, #9E84C5 0%, #9e84c5 60%, #5dc8f2 100%);
   border-radius: 10px;
 }
 

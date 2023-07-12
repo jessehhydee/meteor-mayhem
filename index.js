@@ -49,7 +49,7 @@ const setScene = async () => {
 
   scene           = new THREE.Scene();
   tilesScene      = new THREE.Scene();
-  tilesScene.fog  = new THREE.Fog(0x3E6E81, 50, 130);
+  tilesScene.fog  = new THREE.Fog(0xEBE6F3, 50, 130);
 
   camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 800);
   camera.position.set(0, 200, 70);
