@@ -341,17 +341,11 @@ const createRocket = async () => {
 
 const asteroidEngine = () => {
 
-  // setInterval(() => {
-  //   createAsteroid();
-  // }, 3000 * (1 + (distance / 10)));
-
   if(asteroidSpeedTimeout) clearTimeout(asteroidSpeedTimeout);
 
   const interval = () => {
-
     createAsteroid();
     asteroidSpeedTimeout = setTimeout(interval, asteroidSpeed);
-    
   }
 
   interval();
@@ -510,25 +504,35 @@ const createStars = () => {
     
   }
 
-  const amountOfStars = 4000;
-  const starGeo       = new THREE.BufferGeometry();
-  const positions     = [];
-  
-  for (var i = 0; i < amountOfStars; i ++ ) {
-    var vertex = randomPointCircle(260);
-    positions.push(vertex.x, vertex.y, 0);
+  const createPoints = (amountOfStars, starSize, color) => {
+
+    const amountOfStars = amountOfStars;
+    const starGeo       = new THREE.BufferGeometry();
+    const positions     = [];
+    
+    for (var i = 0; i < amountOfStars; i ++ ) {
+      var vertex = randomPointCircle(260);
+      positions.push(vertex.x, vertex.y, 0);
+    }
+    
+    starGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+    const smallStarMat = new THREE.PointsMaterial({ 
+      color: color,
+      size: starSize
+    });
+    const starMesh = new THREE.Points(starGeo, smallStarMat);
+    starMesh.position.z = -20;
+
+    return starMesh;
+
   }
-  
-  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-  const starMat = new THREE.PointsMaterial({ 
-    color: 0xffffff,
-    size: 0.2 
-  });
-  stars = new THREE.Points(starGeo, starMat);
-  stars.position.z = -20;
+  stars.small   = createPoints(4000, 0.2, 0xffffff);
+  stars.medium  = createPoints(1200, 0.5, 0xcbbce3);
+  stars.large   = createPoints(800, 0.7, 0xa5d8ec);
 
-  scene.add(stars);
+  scene.add(stars.small, stars.medium, stars.large);
 
 }
 
@@ -637,6 +641,14 @@ const asteroidAnimation = () => {
 
 }
 
+const starAnimation = () => {
+
+  stars.small.rotation.z  += 0.0005;
+  stars.medium.rotation.z += 0.0006;
+  stars.large.rotation.z  += 0.0008;
+
+}
+
 const setDistance = () => {
   
   distance++;
@@ -650,10 +662,10 @@ const render = () => {
   updateRocket();
   flamesAnimation();
   asteroidAnimation();
+  starAnimation();
   setDistance();
 
-  allTiles.rotation.z += 0.005;
-  stars.rotation.z    += 0.0005;
+  allTiles.rotation.z   += 0.005;
 
   renderer.autoClear = true;
   renderer.render(scene, camera);
