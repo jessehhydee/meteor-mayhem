@@ -49,7 +49,7 @@ const setScene = async () => {
 
   scene           = new THREE.Scene();
   tilesScene      = new THREE.Scene();
-  tilesScene.fog  = new THREE.Fog(0xEBE6F3, 50, 130);
+  tilesScene.fog  = new THREE.Fog(0xD8CFE9, 50, 130);
 
   camera = new THREE.PerspectiveCamera(60, sizes.width / sizes.height, 1, 800);
   camera.position.set(0, 200, 70);
@@ -157,7 +157,7 @@ const createRocket = async () => {
 
   const createCenter = () => {
 
-    const centerGeo = new THREE.BufferGeometry()
+    const centerGeo = new THREE.BufferGeometry();
     const centerVertices = new Float32Array([
       // front
       -1, 1, 0, -1, -1, 0, 1, -1, 0,
@@ -177,10 +177,11 @@ const createRocket = async () => {
       // bottom
       -1, -1, 0, 1, -1, 0, -2, -2, -4,
       1, -1, 0, -2, -2, -4, 2, -2, -4
-    ])
+    ]);
 
-    const centerAttr = new THREE.BufferAttribute(centerVertices, 3)
-    centerGeo.setAttribute('position', centerAttr)
+    const centerAttr = new THREE.BufferAttribute(centerVertices, 3);
+    centerGeo.setAttribute('position', centerAttr);
+    centerGeo.computeVertexNormals();
     const centerMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       side: THREE.DoubleSide
@@ -196,7 +197,7 @@ const createRocket = async () => {
 
   const createBase = () => {
 
-    const baseGeo = new THREE.BufferGeometry()
+    const baseGeo = new THREE.BufferGeometry();
     const baseVertices = new Float32Array([
       // front
       -1, 1, 0, -1, -1, 0, 1, -1, 0,
@@ -216,10 +217,11 @@ const createRocket = async () => {
       // bottom
       -1, -1, 0, 1, -1, 0, -2, -2, -6,
       1, -1, 0, -2, -2, -6, 2, -2, -6
-    ])
+    ]);
   
-    const baseAttr = new THREE.BufferAttribute(baseVertices, 3)
-    baseGeo.setAttribute('position', baseAttr)
+    const baseAttr = new THREE.BufferAttribute(baseVertices, 3);
+    baseGeo.setAttribute('position', baseAttr);
+    baseGeo.computeVertexNormals();
     const baseMat = new THREE.MeshStandardMaterial({
       color: 0xFF4B5A,
       side: THREE.DoubleSide
@@ -260,7 +262,7 @@ const createRocket = async () => {
 
   const createLegs = () => {
 
-    const legGeo = new THREE.BufferGeometry()
+    const legGeo = new THREE.BufferGeometry();
     const legVertices = new Float32Array([
       // front
       -0.1, 0.4, -1, -0.1, -0.4, 0, 0.1, -0.4, 0,
@@ -280,10 +282,11 @@ const createRocket = async () => {
       // // bottom
       -0.1, -0.4, 0, 0.1, -0.4, 0, -0.1, -0.4, -2,
       0.1, -0.4, 0, -0.1, -0.4, -2, 0.1, -0.4, -2
-    ])
+    ]);
   
-    const legAttr = new THREE.BufferAttribute(legVertices, 3)
-    legGeo.setAttribute('position', legAttr)
+    const legAttr = new THREE.BufferAttribute(legVertices, 3);
+    legGeo.setAttribute('position', legAttr);
+    legGeo.computeVertexNormals();
     const legMat = new THREE.MeshStandardMaterial({
       color: 0xFF4B5A,
       side: THREE.DoubleSide
@@ -490,6 +493,7 @@ const createTile = () => {
 // https://discourse.threejs.org/t/create-circle-with-fuzzy-edge-made-of-individual-random-particles/30150/2
 const createStars = () => {
 
+  stars     = {};
   const vec = new THREE.Vector3();
 
   const randomPointCircle = (radius) => {
@@ -506,7 +510,6 @@ const createStars = () => {
 
   const createPoints = (amountOfStars, starSize, color) => {
 
-    const amountOfStars = amountOfStars;
     const starGeo       = new THREE.BufferGeometry();
     const positions     = [];
     
@@ -665,7 +668,7 @@ const render = () => {
   starAnimation();
   setDistance();
 
-  allTiles.rotation.z   += 0.005;
+  allTiles.rotation.z   += 0.0065;
 
   renderer.autoClear = true;
   renderer.render(scene, camera);
