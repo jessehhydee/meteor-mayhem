@@ -38,7 +38,10 @@ mousePos,
 distance,
 distanceEl,
 asteroidSpeed,
-asteroidSpeedTimeout;
+asteroidSpeedTimeout,
+collisionPos,
+collisionPosReturning,
+collisionTimeout;
 
 const setScene = async () => {
 
@@ -71,9 +74,12 @@ const setScene = async () => {
     x: 0, 
     y: 0
   };
-  distance      = 0;
-  distanceEl    = document.querySelector('.distance');
-  asteroidSpeed = 3000;
+  distance              = 0;
+  distanceEl            = document.querySelector('.distance');
+  asteroidSpeed         = 3000;
+  collisionPos          = 0;
+  collisionPosReturning = false;
+  collisionTimeout      = false;
 
   setControls();
   setTerrainValues();
@@ -85,7 +91,7 @@ const setScene = async () => {
   listenTo();
   render();
 
-}
+};
 
 const setControls = () => {
 
@@ -133,7 +139,7 @@ const setTerrainValues = () => {
     deepWater:    new THREE.Color(0x015373)
   };
   
-}
+};
 
 const createRocket = async () => {
 
@@ -152,7 +158,7 @@ const createRocket = async () => {
 
     rocket.add(coneMesh);
 
-  }
+  };
 
   const createCenter = () => {
 
@@ -192,7 +198,7 @@ const createRocket = async () => {
 
     rocket.add(centerMesh);
 
-  }
+  };
 
   const createBase = () => {
 
@@ -230,7 +236,7 @@ const createRocket = async () => {
 
     rocket.add(baseMesh);
 
-  }
+  };
 
   const createEngine = () => {
 
@@ -243,7 +249,7 @@ const createRocket = async () => {
 
     rocket.add(engineMesh);
 
-  }
+  };
 
   const createExhaust = () => {
 
@@ -257,7 +263,7 @@ const createRocket = async () => {
 
     rocket.add(exhaustMesh);
 
-  }
+  };
 
   const createLegs = () => {
 
@@ -310,7 +316,7 @@ const createRocket = async () => {
       legMeshFour
     );
 
-  }
+  };
 
   const createspark = () => {
 
@@ -325,7 +331,7 @@ const createRocket = async () => {
       rocket.add(sparkMeshes[i]);
     }
 
-  }
+  };
 
   createCone();
   createCenter();
@@ -339,7 +345,7 @@ const createRocket = async () => {
   rocket.rotation.y = (Math.PI / 2) * 3;
   scene.add(rocket);
 
-}
+};
 
 const asteroidEngine = () => {
 
@@ -352,7 +358,7 @@ const asteroidEngine = () => {
 
   interval();
 
-}
+};
 
 // https://discourse.threejs.org/t/change-vertex-position-over-time/31309/3
 const createAsteroid = () => {
@@ -361,6 +367,8 @@ const createAsteroid = () => {
   const vec         = new THREE.Vector3();
   const pos         = asteroidGeo.attributes.position;
   const noise3d     = openSimplexNoise.makeNoise3D(Math.random() * 100);
+  const sizeMin     = 0.7;
+  const sizeMax     = 1.5;
   const posMin      = 190;
   const posMax      = 230;
 
@@ -379,7 +387,7 @@ const createAsteroid = () => {
   }
 
   asteroidGeo.computeVertexNormals();
-  pos.needsUpdate   = true;
+  pos.needsUpdate = true;
 
   const asteroidMat = new THREE.MeshStandardMaterial({
     color: 0x6e6e6e
@@ -389,20 +397,23 @@ const createAsteroid = () => {
   const asteroidGroup = new THREE.Group();
   asteroidGroup.add(asteroidMesh);
 
+  const scale = Math.random() * (sizeMax - sizeMin) + sizeMin;
+
   asteroidMesh.position.set(0, Math.random() * (posMax - posMin) + posMin, 0);
+  asteroidMesh.scale.set(scale, scale, scale);
   asteroidGroup.rotation.z = (Math.PI / 4) * 6.5;
 
   allAsteroids.push(asteroidGroup);
   scene.add(asteroidGroup);
 
-}
+};
 
 const createInitTiles = () => {
 
   for(let i = 0; i < 6; i++) nextTile();
   tilesScene.add(allTiles);
 
-}
+};
 
 const nextTile = () => {
 
@@ -414,7 +425,7 @@ const nextTile = () => {
 
   createTile();
 
-}
+};
 
 const createTile = () => {
 
@@ -476,7 +487,7 @@ const createTile = () => {
 
   allTiles.add(hex);
 
-}
+};
 
 // https://discourse.threejs.org/t/create-circle-with-fuzzy-edge-made-of-individual-random-particles/30150/2
 const createStars = () => {
@@ -525,7 +536,7 @@ const createStars = () => {
 
   scene.add(stars.small, stars.medium, stars.large);
 
-}
+};
 
 const cleanUp = (obj) => {
 
@@ -546,7 +557,7 @@ const cleanUp = (obj) => {
   scene.remove(obj);
   renderer.renderLists.dispose();
 
-}
+};
 
 const resize = () => {
 
@@ -560,7 +571,7 @@ const resize = () => {
 
   renderer.setSize(sizes.width, sizes.height);
 
-}
+};
 
 const mouseMove = (event) => {
 	
@@ -572,14 +583,53 @@ const mouseMove = (event) => {
     y: ty
   };
 
-}
+};
 
 const listenTo = () => {
 
   window.addEventListener('resize', resize.bind(this));
   document.addEventListener('mousemove', mouseMove.bind(this), false);
   
-}
+};
+
+const checkCollisions = () => {
+
+  const collisionPosUpdate = () => {
+
+    if(collisionPos < 15 && !collisionPosReturning) collisionPos += 3;
+    else {
+
+      collisionPosReturning = true;
+
+      if(collisionPos > 0) collisionPos -= 0.5;
+      else {
+        collisionTimeout      = false;
+        collisionPosReturning = false;
+      }
+
+    }
+
+  }
+
+  const collisionAction = () => {
+
+    collisionTimeout = true;
+    collisionPosUpdate();
+
+  };
+
+  if(collisionTimeout) {
+    collisionPosUpdate();
+    return;
+  }
+
+  const rocketBB    = new THREE.Box3().setFromObject(rocket);
+  const asteroidsBB = allAsteroids.map(el => new THREE.Box3().setFromObject(el.children[0]));
+
+  for(const bb of asteroidsBB) 
+    if(rocketBB.intersectsBox(bb)) collisionAction();
+  
+};
 
 const normalize = (pos, vmin, vmax, tmin, tmax) => {
 
@@ -591,7 +641,7 @@ const normalize = (pos, vmin, vmax, tmin, tmax) => {
 
 	return tv;
 
-}
+};
 
 const updateRocket = () => {
 	
@@ -600,12 +650,12 @@ const updateRocket = () => {
 	const targetZ = normalize(mousePos.y, -1, 1, -10, 3);
 	const rotateY = normalize(mousePos.y, -1, 1, 0, 5);
 
-	rocket.position.y = targetY;
-	rocket.position.x = targetX;
+  rocket.position.x = targetX - collisionPos;
+	rocket.position.y = targetY + collisionPos;
 	rocket.position.z = targetZ;
 	rocket.rotation.x = -rotateY;
 
-}
+};
 
 const flamesAnimation = () => {
 
@@ -617,7 +667,7 @@ const flamesAnimation = () => {
     else spark.position.z = 3;
   }
 
-}
+};
 
 const asteroidAnimation = () => {
   
@@ -630,7 +680,7 @@ const asteroidAnimation = () => {
     else cleanUp(asteroid);
   }
 
-}
+};
 
 const starAnimation = () => {
 
@@ -638,7 +688,7 @@ const starAnimation = () => {
   stars.medium.rotation.z += 0.0006;
   stars.large.rotation.z  += 0.0008;
 
-}
+};
 
 const tilesAnimation = () => {
 
@@ -652,7 +702,7 @@ const tilesAnimation = () => {
     nextTile();
   }
 
-}
+};
 
 const setDistance = () => {
   
@@ -660,10 +710,11 @@ const setDistance = () => {
   distanceEl.textContent = distance;
   if(distance % 200 === 0 && asteroidSpeed > 500) asteroidSpeed -= 250;
 
-}
+};
 
 const render = () => {
 
+  checkCollisions();
   updateRocket();
   flamesAnimation();
   asteroidAnimation();
@@ -678,6 +729,6 @@ const render = () => {
 
   requestAnimationFrame(render.bind(this))
 
-}
+};
 
 setScene();
