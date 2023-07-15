@@ -80,7 +80,6 @@ const setScene = async () => {
   createRocket();
   asteroidEngine();
   createInitTiles();
-  tileEngine();
   createStars();
   resize();
   listenTo();
@@ -405,17 +404,6 @@ const createInitTiles = () => {
 
 }
 
-const tileEngine = () => {
-
-  setInterval(() => {
-
-    cleanUp(allTiles.children[0]);
-    nextTile();
-    
-  }, 850);
-
-}
-
 const nextTile = () => {
 
   centerTile.xFrom += tileWidth;
@@ -652,6 +640,20 @@ const starAnimation = () => {
 
 }
 
+const tilesAnimation = () => {
+
+  allTiles.rotation.z += 0.0065;
+
+  const firstChildsRotation
+    = new THREE.Euler().setFromQuaternion(allTiles.children[0].getWorldQuaternion(new THREE.Quaternion())).z;
+
+  if(firstChildsRotation > 0.75) {
+    cleanUp(allTiles.children[0]);
+    nextTile();
+  }
+
+}
+
 const setDistance = () => {
   
   distance++;
@@ -666,9 +668,8 @@ const render = () => {
   flamesAnimation();
   asteroidAnimation();
   starAnimation();
+  tilesAnimation();
   setDistance();
-
-  allTiles.rotation.z   += 0.0065;
 
   renderer.autoClear = true;
   renderer.render(scene, camera);
