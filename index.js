@@ -497,7 +497,7 @@ const createStars = () => {
 
   const randomPointCircle = (radius) => {
  
-    const r = THREE.MathUtils.randFloat(0.7 * radius, 1.2 * radius);
+    const r = THREE.MathUtils.randFloat(0.68 * radius, 1.2 * radius);
     const phi = THREE.MathUtils.randFloat(0, Math.PI * 2);
     
     vec.x = r * Math.cos(phi);
@@ -656,12 +656,12 @@ const updateRocket = () => {
 	
 	const targetX = normalize(mousePos.x, -1, 1, -40, 15);
 	const targetY = normalize(mousePos.y, -1, 1, 190, 220);
-	const targetZ = normalize(mousePos.y, -1, 1, -10, 3);
+	const camZ    = normalize(mousePos.x, -1, 1, 55, 70);
 	const rotateY = normalize(mousePos.y, -1, 1, 0, 5);
 
   rocket.position.x = targetX - collisionPos;
 	rocket.position.y = targetY + collisionPos;
-	rocket.position.z = targetZ;
+	camera.position.z = camZ;
 	rocket.rotation.x = -rotateY;
 
 };
