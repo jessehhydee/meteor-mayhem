@@ -367,8 +367,8 @@ const createAsteroid = () => {
   const vec         = new THREE.Vector3();
   const pos         = asteroidGeo.attributes.position;
   const noise3d     = openSimplexNoise.makeNoise3D(Math.random() * 100);
-  const sizeMin     = 0.7;
-  const sizeMax     = 1.5;
+  const sizeMin     = 2.7;
+  const sizeMax     = 3.5;
   const posMin      = 190;
   const posMax      = 230;
 
@@ -379,7 +379,7 @@ const createAsteroid = () => {
       .normalize();
     vec
       .copy(vec)
-      .multiplyScalar(3)
+      .multiplyScalar(1)
       .addScaledVector(vec, noise3d(vec.x, vec.y, vec.z));
 
     pos.setXYZ(i, vec.x, vec.y, vec.z);
@@ -623,11 +623,20 @@ const checkCollisions = () => {
     return;
   }
 
-  const rocketBB    = new THREE.Box3().setFromObject(rocket);
-  const asteroidsBB = allAsteroids.map(el => new THREE.Box3().setFromObject(el.children[0]));
+  const rocketBB    = new THREE.Box3().setFromObject(rocket.children[0]);
+  const asteroidsBS = allAsteroids.map(el => {
 
-  for(const bb of asteroidsBB) 
-    if(rocketBB.intersectsBox(bb)) collisionAction();
+    if(!el.children[0].geometry.boundingSphere) 
+      el.children[0].geometry.computeBoundingSphere();
+
+    return new THREE.Sphere()
+      .copy(el.children[0].geometry.boundingSphere)
+      .applyMatrix4(el.children[0].matrixWorld);
+
+  });
+
+  for(const bs of asteroidsBS) 
+    if(rocketBB.intersectsSphere(bs)) collisionAction();
   
 };
 
