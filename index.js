@@ -32,6 +32,7 @@ shallowWaterHeight,
 waterHeight,
 deepWaterHeight,
 textures,
+asteroidIDCounter,
 allAsteroids,
 stars,
 mousePos,
@@ -39,6 +40,7 @@ distance,
 distanceEl,
 asteroidSpeed,
 asteroidSpeedTimeout,
+collidedAsteroid,
 collisionPos,
 collisionPosReturning,
 collisionTimeout;
@@ -67,21 +69,23 @@ const setScene = async () => {
   scene.add(new THREE.HemisphereLight(0xffffbb, 0x080820, 1.7));
   tilesScene.add(new THREE.HemisphereLight(0xffffbb, 0x080820, 1));
 
-  sparkMeshes   = [];
-  noise2d       = openSimplexNoise.makeNoise2D(Date.now());
-  allAsteroids  = [];
-  mousePos      = {
+  sparkMeshes       = [];
+  noise2d           = openSimplexNoise.makeNoise2D(Date.now());
+  asteroidIDCounter = 0;
+  allAsteroids      = [];
+  mousePos          = {
     x: 0, 
     y: 0
   };
   distance              = 0;
   distanceEl            = document.querySelector('.distance');
   asteroidSpeed         = 3000;
+  collidedAsteroid      = new THREE.Group();
   collisionPos          = 0;
   collisionPosReturning = false;
   collisionTimeout      = false;
 
-  setControls();
+  // setControls();
   setTerrainValues();
   createRocket();
   asteroidEngine();
@@ -403,6 +407,9 @@ const createAsteroid = () => {
   asteroidMesh.scale.set(scale, scale, scale);
   asteroidGroup.rotation.z = (Math.PI / 4) * 6.5;
 
+  asteroidGroup.name = asteroidIDCounter;
+  asteroidIDCounter++;
+
   allAsteroids.push(asteroidGroup);
   scene.add(asteroidGroup);
 
@@ -609,11 +616,18 @@ const checkCollisions = () => {
 
     }
 
+    if(collisionTimeout) {
+      collidedAsteroid.rotation.z -= 0.025;
+      collidedAsteroid.rotation.x -= 0.03;
+    }
+    else cleanUp(collidedAsteroid);
+
   }
 
-  const collisionAction = () => {
+  const collisionAction = (asteroid) => {
 
-    collisionTimeout = true;
+    collisionTimeout  = true;
+    collidedAsteroid  = asteroid;
     collisionPosUpdate();
 
   };
@@ -629,14 +643,17 @@ const checkCollisions = () => {
     if(!el.children[0].geometry.boundingSphere) 
       el.children[0].geometry.computeBoundingSphere();
 
-    return new THREE.Sphere()
-      .copy(el.children[0].geometry.boundingSphere)
-      .applyMatrix4(el.children[0].matrixWorld);
+    return {
+      asteroid:       el,
+      boundingSphere: new THREE.Sphere()
+        .copy(el.children[0].geometry.boundingSphere)
+        .applyMatrix4(el.children[0].matrixWorld)
+    };
 
   });
 
   for(const bs of asteroidsBS) 
-    if(rocketBB.intersectsSphere(bs)) collisionAction();
+    if(rocketBB.intersectsSphere(bs.boundingSphere)) collisionAction(bs.asteroid);
   
 };
 
@@ -681,12 +698,14 @@ const flamesAnimation = () => {
 const asteroidAnimation = () => {
   
   for(const asteroid of allAsteroids) {
-    if(asteroid.rotation.z < 7.5) {
-      asteroid.rotation.z += 0.007;
-      asteroid.children[0].rotation.z -= 0.05;
-      asteroid.children[0].rotation.y -= 0.05;
+    if(asteroid.name !== collidedAsteroid.name) {
+      if(asteroid.rotation.z < 7.5) {
+        asteroid.rotation.z += 0.007;
+        asteroid.children[0].rotation.z -= 0.05;
+        asteroid.children[0].rotation.y -= 0.05;
+      }
+      else cleanUp(asteroid);
     }
-    else cleanUp(asteroid);
   }
 
 };
