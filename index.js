@@ -40,6 +40,10 @@ allPlanets,
 mousePos,
 distance,
 distanceEl,
+hitPoints,
+hitPointsEl,
+hitPointsProgress,
+hitPointsProgressEl,
 asteroidSpeed,
 asteroidSpeedTimeout,
 collidedAsteroid,
@@ -71,23 +75,8 @@ const setScene = async () => {
   scene.add(new THREE.HemisphereLight(0xffffbb, 0x080820, 1.7));
   tilesScene.add(new THREE.HemisphereLight(0xffffbb, 0x080820, 1));
 
-  sparkMeshes       = [];
-  noise2d           = openSimplexNoise.makeNoise2D(Date.now());
-  asteroidIDCounter = 0;
-  allAsteroids      = [];
-  mousePos          = {
-    x: 0, 
-    y: 0
-  };
-  distance              = 0;
-  distanceEl            = document.querySelector('.distance');
-  asteroidSpeed         = 3000;
-  collidedAsteroid      = new THREE.Group();
-  collisionPos          = 0;
-  collisionPosReturning = false;
-  collisionTimeout      = false;
-
-  setControls();
+  // setControls();
+  setAppValues();
   setTerrainValues();
   setPlanetValues();
   createRocket();
@@ -107,6 +96,31 @@ const setControls = () => {
   controls.enableDamping  = true;
   controls.target.y       = 200;
   controls.update();
+
+};
+
+const setAppValues = () => {
+
+  sparkMeshes       = [];
+  noise2d           = openSimplexNoise.makeNoise2D(Date.now());
+  asteroidIDCounter = 0;
+  allAsteroids      = [];
+  mousePos          = {
+    x: 0, 
+    y: 0
+  };
+  distance                = 0;
+  distanceEl              = document.querySelector('.distance');
+  hitPoints               = 1;
+  hitPointsEl             = document.querySelector('.hit-points');
+  hitPointsEl.textContent = hitPoints;
+  hitPointsProgress       = 0;
+  hitPointsProgressEl     = document.querySelector('.hit-points-progress-bar');
+  asteroidSpeed           = 3000;
+  collidedAsteroid        = new THREE.Group();
+  collisionPos            = 0;
+  collisionPosReturning   = false;
+  collisionTimeout        = false;
 
 };
 
@@ -767,8 +781,12 @@ const checkCollisions = () => {
 
   const collisionAction = (asteroid) => {
 
-    collisionTimeout  = true;
-    collidedAsteroid  = asteroid;
+    collisionTimeout        = true;
+    collidedAsteroid        = asteroid;
+
+    hitPoints--;
+    hitPointsEl.textContent = hitPoints;
+    
     collisionPosUpdate();
 
   };
@@ -893,6 +911,20 @@ const setDistance = () => {
 
 };
 
+const setHitPoints = () => {
+
+  if(hitPointsProgress < 100) {
+    hitPointsProgress += 0.1;
+    hitPointsProgressEl.style.height = `${hitPointsProgress}%`;
+  }
+  else {
+    hitPointsProgress = 0;
+    hitPoints++;
+    hitPointsEl.textContent = hitPoints;
+  }
+
+};
+
 const render = () => {
 
   checkCollisions();
@@ -903,6 +935,7 @@ const render = () => {
   planetAnimation();
   tilesAnimation();
   setDistance();
+  setHitPoints();
 
   renderer.autoClear = true;
   renderer.render(scene, camera);
