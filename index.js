@@ -545,6 +545,115 @@ const createStars = () => {
 
 };
 
+const createPlanet = () => {
+
+  const planetColours = [
+    {
+      low:    [52,62,71],
+      medium: [164,155,114],
+      high:   [195,161,113]
+    },
+    {
+      low:    [255,197,148],
+      medium: [244,161,92],
+      high:   [204,130,55]
+    },
+    {
+      low:    [255,241,213],
+      medium: [221,196,175],
+      high:   [150,133,112]
+    },
+    {
+      low:    [225,238,238],
+      medium: [198,211,227],
+      high:   [217,221,244]
+    },
+    {
+      low:    [214,96,131],
+      medium: [68,180,192],
+      high:   [106,62,185]
+    },
+    {
+      low:    [233,254,254],
+      medium: [158,105,254],
+      high:   [246,220,254]
+    },
+    {
+      low:    [3,221,214],
+      medium: [235,232,207],
+      high:   [153,132,105]
+    },
+    {
+      low:    [186,75,12],
+      medium: [143,25,15],
+      high:   [85,30,36]
+    }
+  ];
+  const planetColour  = planetColours[Math.floor(Math.random() * planetColours.length)];
+  const planetGeo     = new THREE.IcosahedronGeometry(1, 7);
+  const vec           = new THREE.Vector3();
+  const pos           = planetGeo.attributes.position;
+  const colours       = [];
+  const noise3d       = openSimplexNoise.makeNoise3D(Math.random() * 100);
+  const sizeMin       = 2.7;
+  const sizeMax       = 3.5;
+
+  for(let i = 0; i < pos.count; i++) {
+
+    vec
+      .fromBufferAttribute(pos, i)
+      .normalize();
+
+    let noise = noise3d(vec.x, vec.y, vec.z) * 0.07;
+    if(noise > 0.04) {
+      noise += 0.08;
+      colours.push(
+        planetColour.high[0],
+        planetColour.high[1],
+        planetColour.high[2],
+      );
+    }
+    else if(noise > 0.02) {
+      noise += 0.04;
+      colours.push(
+        planetColour.medium[0],
+        planetColour.medium[1],
+        planetColour.medium[2],
+      );
+    }
+    else 
+      colours.push(
+        planetColour.low[0],
+        planetColour.low[1],
+        planetColour.low[2],
+      );
+
+    vec
+      .copy(vec)
+      .multiplyScalar(1)
+      .addScaledVector(vec, noise);
+
+    pos.setXYZ(i, vec.x, vec.y, vec.z);
+
+  }
+
+  planetGeo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colours), 3));
+  planetGeo.computeVertexNormals();
+  pos.needsUpdate = true;
+
+  const planetMat = new THREE.MeshStandardMaterial({
+    vertexColors: true
+  });
+
+  const planetMesh  = new THREE.Mesh(planetGeo, planetMat);
+
+  const scale = Math.random() * (sizeMax - sizeMin) + sizeMin;
+  planetMesh.scale.set(scale, scale, scale);
+
+  scene.add(planetMesh);
+
+};
+
 const cleanUp = (obj) => {
 
   if(obj.geometry && obj.material) {
