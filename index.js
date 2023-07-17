@@ -35,6 +35,8 @@ textures,
 asteroidIDCounter,
 allAsteroids,
 stars,
+planetColours,
+allPlanets,
 mousePos,
 distance,
 distanceEl,
@@ -85,12 +87,14 @@ const setScene = async () => {
   collisionPosReturning = false;
   collisionTimeout      = false;
 
-  // setControls();
+  setControls();
   setTerrainValues();
+  setPlanetValues();
   createRocket();
   asteroidEngine();
   createInitTiles();
   createStars();
+  planetEngine();
   resize();
   listenTo();
   render();
@@ -143,6 +147,54 @@ const setTerrainValues = () => {
     deepWater:    new THREE.Color(0x015373)
   };
   
+};
+
+const setPlanetValues = () => {
+
+  allPlanets    = [];
+  planetColours = [
+    {
+      low:    [0.204, 0.243, 0.278],
+      medium: [0.643, 0.608, 0.447],
+      high:   [0.765, 0.631, 0.443]
+    },
+    {
+      low:    [1, 0.773, 0.580],
+      medium: [0.957, 0.631, 0.361],
+      high:   [0.8, 0.51, 0.216]
+    },
+    {
+      low:    [1, 0.945, 0.835],
+      medium: [0.867, 0.769, 0.686],
+      high:   [0.588, 0.522, 0.439]
+    },
+    {
+      low:    [0.882, 0.933, 0.933],
+      medium: [0.776, 0.827, 0.89],
+      high:   [0.851, 0.867, 0.957]
+    },
+    {
+      low:    [0.839, 0.376, 0.514],
+      medium: [0.266, 0.706, 0.753],
+      high:   [0.416, 0.243, 0.725]
+    },
+    {
+      low:    [0.914, 0.996, 0.996],
+      medium: [0.62, 0.412, 0.996],
+      high:   [0.965, 0.863, 0.996]
+    },
+    {
+      low:    [0.012, 0.867, 0.839],
+      medium: [0.922, 0.91, 0.812],
+      high:   [0.6, 0.518, 0.412]
+    },
+    {
+      low:    [0.729, 0.294, 0.047],
+      medium: [0.561, 0.098, 0.059],
+      high:   [0.333, 0.118, 0.141]
+    }
+  ];
+
 };
 
 const createRocket = async () => {
@@ -545,58 +597,32 @@ const createStars = () => {
 
 };
 
+const planetEngine = () => {
+
+  const min = 4000;
+  const max = 20000;
+
+  const interval = () => {
+    createPlanet();
+    setTimeout(interval, Math.random() * (max - min) + min);
+  }
+
+  interval();
+
+};
+
 const createPlanet = () => {
 
-  const planetColours = [
-    {
-      low:    [0.204, 0.243, 0.278],
-      medium: [0.643, 0.608, 0.447],
-      high:   [0.765, 0.631, 0.443]
-    },
-    {
-      low:    [1, 0.773, 0.580],
-      medium: [0.957, 0.631, 0.361],
-      high:   [0.8, 0.51, 0.216]
-    },
-    {
-      low:    [1, 0.945, 0.835],
-      medium: [0.867, 0.769, 0.686],
-      high:   [0.588, 0.522, 0.439]
-    },
-    {
-      low:    [0.882, 0.933, 0.933],
-      medium: [0.776, 0.827, 0.89],
-      high:   [0.851, 0.867, 0.957]
-    },
-    {
-      low:    [0.839, 0.376, 0.514],
-      medium: [0.266, 0.706, 0.753],
-      high:   [0.416, 0.243, 0.725]
-    },
-    {
-      low:    [0.914, 0.996, 0.996],
-      medium: [0.62, 0.412, 0.996],
-      high:   [0.965, 0.863, 0.996]
-    },
-    {
-      low:    [0.012, 0.867, 0.839],
-      medium: [0.922, 0.91, 0.812],
-      high:   [0.6, 0.518, 0.412]
-    },
-    {
-      low:    [0.729, 0.294, 0.047],
-      medium: [0.561, 0.098, 0.059],
-      high:   [0.333, 0.118, 0.141]
-    }
-  ];
   const planetColour  = planetColours[Math.floor(Math.random() * planetColours.length)];
   const planetGeo     = new THREE.IcosahedronGeometry(1, 7);
   const vec           = new THREE.Vector3();
   const pos           = planetGeo.attributes.position;
   const colours       = [];
   const noise3d       = openSimplexNoise.makeNoise3D(Math.random() * 100);
-  const sizeMin       = 2.7;
-  const sizeMax       = 3.5;
+  const sizeMin       = 3;
+  const sizeMax       = 9;
+  const posMin        = 200;
+  const posMax        = 230;
 
   for(let i = 0; i < pos.count; i++) {
 
@@ -604,7 +630,7 @@ const createPlanet = () => {
       .fromBufferAttribute(pos, i)
       .normalize();
 
-    let noise = noise3d(vec.x, vec.y, vec.z) * 0.07;
+    let noise = noise3d(vec.x, vec.y, vec.z) * 0.09;
     if(noise > 0.04) {
       noise += 0.08;
       colours.push(
@@ -646,11 +672,17 @@ const createPlanet = () => {
   });
 
   const planetMesh  = new THREE.Mesh(planetGeo, planetMat);
+  const planetGroup = new THREE.Group();
+  planetGroup.add(planetMesh);
 
   const scale = Math.random() * (sizeMax - sizeMin) + sizeMin;
-  planetMesh.scale.set(scale, scale, scale);
 
-  scene.add(planetMesh);
+  planetMesh.position.set(0, Math.random() * (posMax - posMin) + posMin, -20);
+  planetMesh.scale.set(scale, scale, scale);
+  planetGroup.rotation.z = (Math.PI / 4) * 6.5;
+
+  allPlanets.push(planetGroup);
+  scene.add(planetGroup);
 
 };
 
@@ -827,6 +859,18 @@ const starAnimation = () => {
 
 };
 
+const planetAnimation = () => {
+  
+  for(const planet of allPlanets) {
+    if(planet.rotation.z < 7.5) {
+      planet.rotation.z += 0.001;
+      planet.children[0].rotation.y += 0.012;
+    }
+    else cleanUp(planet);
+  }
+
+};
+
 const tilesAnimation = () => {
 
   allTiles.rotation.z += 0.0065;
@@ -856,6 +900,7 @@ const render = () => {
   flamesAnimation();
   asteroidAnimation();
   starAnimation();
+  planetAnimation();
   tilesAnimation();
   setDistance();
 
