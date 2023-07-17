@@ -7,9 +7,15 @@
   overflow: hidden;
 }
 
+@font-face {
+  font-family: 'AstroSpace';
+  src: url('assets/font/AstroSpace-eZ2Bg.ttf');
+  font-style: normal;
+}
+
 html, body {
   overflow: hidden;
-  font-family: 'Lunarie', sans-serif;
+  font-family: sans-serif;
   color: #2f2f2f;
 }
 
@@ -36,15 +42,57 @@ html, body {
   border-radius: 10px;
 }
 
-.distance-container {
+.info-container {
+  background-color: #171717b0;
+  height: auto;
+  width: 100%;
+  max-width: fit-content;
+  margin: 30px;
   position: absolute;
   top: 10px;
-  left: 40px;
+  left: 10px;
   z-index: 10;
-  width: fit-content;
+  border-radius: 8px;
+  padding: 30px 20px;
+  color: #faebd7;
+}
+
+h3 {
+  font-family: 'AstroSpace', sans-serif;
+  margin: 0px;
+}
+
+p {
+  font-size: 11px;
+  margin: 0px;
+  font-weight: 400;
+}
+
+.stats-container {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.distance-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 90px;
 }
 
 .distance {
-  font-size: 30px;
-  color: antiquewhite;
+  font-family: 'AstroSpace', sans-serif;
+  margin: 0px;
+  font-size: 22px;
+}
+
+.hit-points-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 90px;
+  border-left: 1px solid #faebd7;
+  padding-left: 10px;
 }
