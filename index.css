@@ -128,10 +128,13 @@ p {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
+  width: 100%;
+  max-width: 270px;
   border-radius: 8px;
   border: 2px solid #ffffff;
-  padding: 30px 60px;
+  padding: 30px 20px;
   color: #faebd7;
+  text-align: center;
   display: none;
   animation: fadeIn 1s ease-in;
 }
@@ -141,5 +144,40 @@ p {
   }
   100% {
     opacity: 1;
+  }
+}
+
+
+
+
+
+@media (max-width: 500px) {
+  h3 {
+    font-size: 22px;
+  }
+  
+  .stats-container {
+    gap: 15px;
+  }
+
+  .distance-container {
+    width: 70px;
+  }
+
+  .hit-points-container {
+    width: 70px;
+  }
+
+  .stats {
+    font-size: 18px;
+  }
+
+  .hit-points-progress-container {
+    width: 10px;
+    border-radius: 3px;
+  }
+
+  .play-again-container {
+    max-width: 180px;
   }
 }
