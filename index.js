@@ -6,52 +6,54 @@ const container = document.querySelector('.container');
 const canvas    = document.querySelector('.canvas');
 
 let
-sizes,
-scene,
-tilesScene,
-camera,
-controls,
-renderer,
-noise2d,
-rocket,
-sparkMeshes,
-flyingIn,
-rocketDown,
-allTiles,
-centerTileFromTo,
-centerTile,
-tileWidth,
-tileAngle,
-amountOfHexInTile,
-maxHeight,
-snowHeight,
-lightSnowHeight,
-rockHeight,
-forestHeight,
-grassHeight,
-sandHeight,
-shallowWaterHeight,
-waterHeight,
-deepWaterHeight,
-textures,
-asteroidIDCounter,
-allAsteroids,
-stars,
-planetColours,
-allPlanets,
-mousePos,
-distance,
-distanceEl,
-hitPoints,
-hitPointsEl,
-hitPointsProgress,
-hitPointsProgressEl,
-asteroidSpeed,
-asteroidSpeedTimeout,
-collidedAsteroid,
-collisionPos,
-collisionPosReturning,
-collisionTimeout;
+  sizes,
+  scene,
+  tilesScene,
+  camera,
+  controls,
+  renderer,
+  noise2d,
+  rocket,
+  sparkMeshes,
+  flyingIn,
+  rocketDown,
+  allTiles,
+  centerTileFromTo,
+  centerTile,
+  tileWidth,
+  tileAngle,
+  amountOfHexInTile,
+  maxHeight,
+  snowHeight,
+  lightSnowHeight,
+  rockHeight,
+  forestHeight,
+  grassHeight,
+  sandHeight,
+  shallowWaterHeight,
+  waterHeight,
+  deepWaterHeight,
+  textures,
+  asteroidIDCounter,
+  allAsteroids,
+  stars,
+  planetColours,
+  allPlanets,
+  mousePos,
+  distance,
+  distanceEl,
+  hitPoints,
+  hitPointsEl,
+  hitPointsProgress,
+  hitPointsProgressEl,
+  asteroidSpeed,
+  asteroidSpeedTimeout,
+  collidedAsteroid,
+  collisionPos,
+  collisionPosReturning,
+  collisionTimeout,
+  canPlayAgain,
+  playAgainEl;
 
 const setScene = async () => {
 
@@ -125,6 +127,8 @@ const setAppValues = () => {
   collisionPos            = 0;
   collisionPosReturning   = false;
   collisionTimeout        = false;
+  canPlayAgain            = false;
+  playAgainEl             = document.querySelector('.play-again-container');
 
 };
 
@@ -753,9 +757,13 @@ const mouseMove = (event) => {
 
 const playAgain = () => {
 
-  if(!rocketDown) return;
+  if(!canPlayAgain) return;
 
   createRocket();
+
+  playAgainEl.style.display = 'none';
+
+  canPlayAgain  = false;
   flyingIn      = true;
   rocketDown    = false;
   distance      = 0;
@@ -873,7 +881,11 @@ const updateRocket = () => {
       rocket.position.y -= 0.2;
       rocket.rotation.y -= 0.02;
     }
-    else cleanUp(rocket);
+    else {
+      cleanUp(rocket);
+      playAgainEl.style.display = 'block';
+      canPlayAgain              = true;
+    }
 
     return;
 
