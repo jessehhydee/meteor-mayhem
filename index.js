@@ -15,6 +15,8 @@ renderer,
 noise2d,
 rocket,
 sparkMeshes,
+flyingIn,
+rocketDown,
 allTiles,
 centerTileFromTo,
 centerTile,
@@ -102,6 +104,8 @@ const setControls = () => {
 const setAppValues = () => {
 
   sparkMeshes       = [];
+  flyingIn          = true;
+  rocketDown        = false;
   noise2d           = openSimplexNoise.makeNoise2D(Date.now());
   asteroidIDCounter = 0;
   allAsteroids      = [];
@@ -411,7 +415,7 @@ const createRocket = async () => {
   createLegs();
   createspark();
 
-  rocket.position.set(0, 200, 0);
+  rocket.position.set(0, 200, 80);
   rocket.rotation.y = (Math.PI / 2) * 3;
   scene.add(rocket);
 
@@ -422,7 +426,7 @@ const asteroidEngine = () => {
   if(asteroidSpeedTimeout) clearTimeout(asteroidSpeedTimeout);
 
   const interval = () => {
-    createAsteroid();
+    if(!flyingIn && !rocketDown) createAsteroid();
     asteroidSpeedTimeout = setTimeout(interval, asteroidSpeed);
   }
 
@@ -747,11 +751,38 @@ const mouseMove = (event) => {
 
 };
 
+const playAgain = () => {
+
+  if(!rocketDown) return;
+
+  createRocket();
+  flyingIn    = true;
+  rocketDown  = false;
+  distance    = 0;
+
+  hitPoints               = 1;
+  hitPointsEl.textContent = hitPoints;
+
+  hitPointsProgress                 = 0;
+  hitPointsProgressEl.style.height  = `${hitPointsProgress}%`;
+
+};
+
 const listenTo = () => {
 
   window.addEventListener('resize', resize.bind(this));
   document.addEventListener('mousemove', mouseMove.bind(this), false);
+  document.addEventListener('click', playAgain.bind(this), false);
   
+};
+
+const flyIn = () => {
+
+  if(!flyingIn) return;
+  
+  if(rocket.position.z > 0) rocket.position.z--;
+  else flyingIn = false;
+
 };
 
 const checkCollisions = () => {
@@ -777,17 +808,19 @@ const checkCollisions = () => {
     }
     else cleanUp(collidedAsteroid);
 
-  }
+  };
 
   const collisionAction = (asteroid) => {
 
-    collisionTimeout        = true;
-    collidedAsteroid        = asteroid;
-
+    collisionTimeout  = true;
+    collidedAsteroid  = asteroid;
     hitPoints--;
-    hitPointsEl.textContent = hitPoints;
-    
-    collisionPosUpdate();
+
+    if(hitPoints < 0) rocketDown = true;
+    else {
+      hitPointsEl.textContent = hitPoints;
+      collisionPosUpdate();
+    }
 
   };
 
@@ -795,6 +828,8 @@ const checkCollisions = () => {
     collisionPosUpdate();
     return;
   }
+
+  if(rocketDown) return;
 
   const rocketBB    = new THREE.Box3().setFromObject(rocket.children[0]);
   const asteroidsBS = allAsteroids.map(el => {
@@ -829,6 +864,19 @@ const normalize = (pos, vmin, vmax, tmin, tmax) => {
 };
 
 const updateRocket = () => {
+
+  if(rocketDown) {
+
+    if(rocket.position.x > -120) {
+      rocket.position.x -= 0.5;
+      rocket.position.y -= 0.2;
+      rocket.rotation.y -= 0.02;
+    }
+    else cleanUp(rocket);
+
+    return;
+
+  }
 	
 	const targetX = normalize(mousePos.x, -1, 1, -40, 15);
 	const targetY = normalize(mousePos.y, -1, 1, 190, 220);
@@ -849,7 +897,9 @@ const flamesAnimation = () => {
       spark.position.z += 0.2;
       spark.scale.set(Math.sin(spark.position.z / 3.3), Math.sin(spark.position.z / 3.3), Math.sin(spark.position.z / 3.3));
     }
-    else spark.position.z = 3;
+    else {
+      if(!rocketDown) spark.position.z = 3;
+    }
   }
 
 };
@@ -904,14 +954,30 @@ const tilesAnimation = () => {
 };
 
 const setDistance = () => {
+
+  if(rocketDown) return;
   
   distance++;
   distanceEl.textContent = distance;
-  if(distance % 200 === 0 && asteroidSpeed > 500) asteroidSpeed -= 250;
+
+};
+
+const asteroidLevels = () => {
+
+  if(distance > 800 && distance <= 1500 && asteroidSpeed !== 2500) asteroidSpeed = 2500;
+  else if(distance > 1500 && distance <= 2200 && asteroidSpeed !== 2000) asteroidSpeed = 2000;
+  else if(distance > 2200 && distance <= 2800 && asteroidSpeed !== 1200) asteroidSpeed = 1200;
+  else if(distance > 2800 && distance <= 3300 && asteroidSpeed !== 800) asteroidSpeed = 800;
+  else if(distance > 3300 && distance <= 3700 && asteroidSpeed !== 600) asteroidSpeed = 600;
+  else if(distance > 3700 && distance <= 4000 && asteroidSpeed !== 450) asteroidSpeed = 450;
+  else if(distance > 4000 && distance <= 4200 && asteroidSpeed !== 300) asteroidSpeed = 300;
+  else if(distance > 4200 && asteroidSpeed !== 250) asteroidSpeed = 250;
 
 };
 
 const setHitPoints = () => {
+
+  if(rocketDown) return;
 
   if(hitPointsProgress < 100) {
     hitPointsProgress += 0.1;
@@ -927,6 +993,7 @@ const setHitPoints = () => {
 
 const render = () => {
 
+  flyIn();
   checkCollisions();
   updateRocket();
   flamesAnimation();
@@ -935,6 +1002,7 @@ const render = () => {
   planetAnimation();
   tilesAnimation();
   setDistance();
+  asteroidLevels();
   setHitPoints();
 
   renderer.autoClear = true;
