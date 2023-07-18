@@ -12,6 +12,11 @@
   src: url('assets/font/AstroSpace-eZ2Bg.ttf');
   font-style: normal;
 }
+@font-face {
+  font-family: 'Blomberg';
+  src: url('assets/font-2/Blomberg-8MKKZ.otf');
+  font-style: normal;
+}
 
 html, body {
   overflow: hidden;
@@ -66,8 +71,10 @@ html, body {
 }
 
 h3 {
-  font-family: 'AstroSpace', sans-serif;
+  /* font-family: 'AstroSpace', sans-serif; */
+  font-family: 'Blomberg', sans-serif;
   margin: 0px;
+  font-size: 28px;
 }
 
 p {
@@ -100,7 +107,8 @@ p {
 }
 
 .stats {
-  font-family: 'AstroSpace', sans-serif;
+  /* font-family: 'AstroSpace', sans-serif; */
+  font-family: 'Blomberg', sans-serif;
   margin: 0px;
   font-size: 22px;
 }
