@@ -756,9 +756,10 @@ const playAgain = () => {
   if(!rocketDown) return;
 
   createRocket();
-  flyingIn    = true;
-  rocketDown  = false;
-  distance    = 0;
+  flyingIn      = true;
+  rocketDown    = false;
+  distance      = 0;
+  asteroidSpeed = 3000;
 
   hitPoints               = 1;
   hitPointsEl.textContent = hitPoints;
