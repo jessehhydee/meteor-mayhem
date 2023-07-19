@@ -36,6 +36,76 @@ html, body {
     linear-gradient(90deg, #9E84C5 0%, #9e84c5 60%, #5dc8f2 100%);
   border-radius: 10px;
 }
+@media (max-height: 850px) {
+  .container {
+    background: 
+      radial-gradient(2200px 1800px at 50% 150%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 60%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 750px) {
+  .container {
+    background: 
+      radial-gradient(2100px 1800px at 50% 160%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 60%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 690px) {
+  .container {
+    background: 
+      radial-gradient(2000px 1800px at 50% 170%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 60%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 630px) {
+  .container {
+    background: 
+      radial-gradient(1800px 1800px at 50% 180%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 60%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 580px) {
+  .container {
+    background: 
+      radial-gradient(1700px 1800px at 50% 190%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 60%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 530px) {
+  .container {
+    background: 
+      radial-gradient(1600px 1800px at 50% 200%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 60%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 480px) {
+  .container {
+    background: 
+      radial-gradient(1500px 1800px at 50% 220%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 50%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 430px) {
+  .container {
+    background: 
+      radial-gradient(1400px 1800px at 50% 235%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 50%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 390px) {
+  .container {
+    background: 
+      radial-gradient(1300px 1800px at 50% 250%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 50%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 350px) {
+  .container {
+    background: 
+      radial-gradient(1200px 1800px at 50% 270%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 50%, #5dc8f2 100%);
+  }
+}
 
 .canvas {
   border-radius: 10px;
@@ -172,11 +242,16 @@ p {
     height: 100vh;
     top: 0px;
     left: 0px;
+    transform: none;
     border-radius: 0px;
   }
   
   .canvas {
-    border-radius: 00px;
+    border-radius: 0px;
+  }
+
+  .game-info-container {
+    margin: 5px;
   }
 
   h3 {
@@ -201,10 +276,12 @@ p {
 
   .hit-points-progress-container {
     width: 10px;
+    height: 140px;
     border-radius: 3px;
   }
 
   .play-again-container {
     max-width: 180px;
+    padding: 20px 15px;
   }
 }
