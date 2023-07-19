@@ -41,6 +41,10 @@ html, body {
   border-radius: 10px;
 }
 
+
+
+/* Game Info */
+
 .game-info-container {
   width: 100%;
   max-width: fit-content;
@@ -149,9 +153,32 @@ p {
 
 
 
+/* Joystick */
+
+.joystick {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+
+
 
 
 @media (max-width: 500px) {
+  .container {
+    width: 100vw;
+    height: 100vh;
+    top: 0px;
+    left: 0px;
+    border-radius: 0px;
+  }
+  
+  .canvas {
+    border-radius: 00px;
+  }
+
   h3 {
     font-size: 22px;
   }

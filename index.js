@@ -81,6 +81,7 @@ const setScene = async () => {
 
   // setControls();
   setAppValues();
+  setJoystick();
   setTerrainValues();
   setPlanetValues();
   createRocket();
@@ -129,6 +130,19 @@ const setAppValues = () => {
   collisionTimeout        = false;
   canPlayAgain            = false;
   playAgainEl             = document.querySelector('.play-again-container');
+
+};
+
+const setJoystick = () => {
+
+  const joystickOptions = {
+    zone: document.getElementById('zone-joystick'),
+    shape: 'circle',
+    color: '#ffffff6b',
+    mode: 'dynamic'
+  };
+
+  nipplejs.create(joystickOptions);
 
 };
 
