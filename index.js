@@ -81,7 +81,6 @@ const setScene = async () => {
 
   // setControls();
   setAppValues();
-  setJoystick();
   setTerrainValues();
   setPlanetValues();
   createRocket();
@@ -130,19 +129,6 @@ const setAppValues = () => {
   collisionTimeout        = false;
   canPlayAgain            = false;
   playAgainEl             = document.querySelector('.play-again-container');
-
-};
-
-const setJoystick = () => {
-
-  const joystickOptions = {
-    zone: document.getElementById('zone-joystick'),
-    shape: 'circle',
-    color: '#ffffff6b',
-    mode: 'dynamic'
-  };
-
-  nipplejs.create(joystickOptions);
 
 };
 
@@ -769,6 +755,18 @@ const mouseMove = (event) => {
 
 };
 
+const touchMove = (event) => {
+
+  const tx = -1 + (event.touches[0].pageX / window.innerWidth) * 2;
+	const ty = 1 - (event.touches[0].pageY / window.innerHeight) * 2;
+
+	mousePos = {
+    x: tx, 
+    y: ty
+  };
+
+};
+
 const playAgain = () => {
 
   if(!canPlayAgain) return;
@@ -795,6 +793,7 @@ const listenTo = () => {
 
   window.addEventListener('resize', resize.bind(this));
   document.addEventListener('mousemove', mouseMove.bind(this), false);
+  document.addEventListener('touchmove', touchMove.bind(this), false);
   document.addEventListener('click', playAgain.bind(this), false);
   
 };
