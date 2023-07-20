@@ -79,7 +79,6 @@ const setScene = async () => {
   scene.add(new THREE.HemisphereLight(0xffffbb, 0x080820, 1.7));
   tilesScene.add(new THREE.HemisphereLight(0xffffbb, 0x080820, 1));
 
-  // setControls();
   setAppValues();
   setTerrainValues();
   setPlanetValues();
@@ -91,15 +90,6 @@ const setScene = async () => {
   resize();
   listenTo();
   render();
-
-};
-
-const setControls = () => {
-
-  controls                = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping  = true;
-  controls.target.y       = 200;
-  controls.update();
 
 };
 
@@ -240,8 +230,8 @@ const createRocket = async () => {
 
   const createCenter = () => {
 
-    const centerGeo = new THREE.BufferGeometry();
-    const centerVertices = new Float32Array([
+    const centerGeo       = new THREE.BufferGeometry();
+    const centerVertices  = new Float32Array([
       // front
       -1, 1, 0, -1, -1, 0, 1, -1, 0,
       1, -1, 0, -1, 1, 0, 1, 1, 0,
@@ -280,8 +270,8 @@ const createRocket = async () => {
 
   const createBase = () => {
 
-    const baseGeo = new THREE.BufferGeometry();
-    const baseVertices = new Float32Array([
+    const baseGeo       = new THREE.BufferGeometry();
+    const baseVertices  = new Float32Array([
       // front
       -1, 1, 0, -1, -1, 0, 1, -1, 0,
       1, -1, 0, -1, 1, 0, 1, 1, 0,
@@ -345,7 +335,7 @@ const createRocket = async () => {
 
   const createLegs = () => {
 
-    const legGeo = new THREE.BufferGeometry();
+    const legGeo      = new THREE.BufferGeometry();
     const legVertices = new Float32Array([
       // front
       -0.1, 0.4, -1, -0.1, -0.4, 0, 0.1, -0.4, 0,
@@ -521,9 +511,9 @@ const createTile = () => {
 
   const setHexMesh = () => {
 
-    const geo   = new THREE.CylinderGeometry(1, 1, 1, 6, 1, false);
-    const mat   = new THREE.MeshStandardMaterial();
-    const mesh  = new THREE.InstancedMesh(geo, mat, amountOfHexInTile);
+    const geo       = new THREE.CylinderGeometry(1, 1, 1, 6, 1, false);
+    const mat       = new THREE.MeshStandardMaterial();
+    const mesh      = new THREE.InstancedMesh(geo, mat, amountOfHexInTile);
     mesh.rotation.z = ((Math.PI * 2) / 24) * tileAngle;
   
     return mesh;
@@ -578,7 +568,7 @@ const createStars = () => {
 
   const randomPointCircle = (radius) => {
  
-    const r = THREE.MathUtils.randFloat(0.68 * radius, 1.2 * radius);
+    const r   = THREE.MathUtils.randFloat(0.68 * radius, 1.2 * radius);
     const phi = THREE.MathUtils.randFloat(0, Math.PI * 2);
     
     vec.x = r * Math.cos(phi);
@@ -590,8 +580,8 @@ const createStars = () => {
 
   const createPoints = (amountOfStars, starSize, color) => {
 
-    const starGeo       = new THREE.BufferGeometry();
-    const positions     = [];
+    const starGeo   = new THREE.BufferGeometry();
+    const positions = [];
     
     for (var i = 0; i < amountOfStars; i ++ ) {
       var vertex = randomPointCircle(260);
@@ -601,8 +591,8 @@ const createStars = () => {
     starGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
     const smallStarMat = new THREE.PointsMaterial({ 
-      color: color,
-      size: starSize
+      color:  color,
+      size:   starSize
     });
     const starMesh = new THREE.Points(starGeo, smallStarMat);
     starMesh.position.z = -20;
@@ -860,7 +850,7 @@ const checkCollisions = () => {
       el.children[0].geometry.computeBoundingSphere();
 
     return {
-      asteroid:       el,
+      asteroid: el,
       boundingSphere: new THREE.Sphere()
         .copy(el.children[0].geometry.boundingSphere)
         .applyMatrix4(el.children[0].matrixWorld)

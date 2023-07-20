@@ -281,11 +281,19 @@ p {
     margin: 5px;
   }
 
+  .info-container {
+    padding: 20px 15px;
+  }
+
   .info-container h3 {
     display: none;
   }
 
+  .stats-container {
+    margin-top: 0px;
+  }
+
   .hit-points-progress-container {
-    height: 100%;
+    height: calc(100% - 140px);
   }
 }
