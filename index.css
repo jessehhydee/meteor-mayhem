@@ -106,6 +106,34 @@ html, body {
       linear-gradient(90deg, #9E84C5 0%, #9e84c5 50%, #5dc8f2 100%);
   }
 }
+@media (max-height: 320px) {
+  .container {
+    background: 
+      radial-gradient(1100px 1800px at 50% 280%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 50%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 305px) {
+  .container {
+    background: 
+      radial-gradient(1100px 1800px at 50% 300%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 50%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 280px) {
+  .container {
+    background: 
+      radial-gradient(1100px 1800px at 50% 315%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 50%, #5dc8f2 100%);
+  }
+}
+@media (max-height: 265px) {
+  .container {
+    background: 
+      radial-gradient(1100px 1800px at 50% 330%, #ffffff 0, #ffffff 27%, #ffffff00 36%, #181818 40%, #000000 100%),
+      linear-gradient(90deg, #9E84C5 0%, #9e84c5 50%, #5dc8f2 100%);
+  }
+}
 
 .canvas {
   border-radius: 10px;
@@ -126,6 +154,8 @@ html, body {
   display: flex;
   flex-direction: row;
   gap: 20px;
+  display: none;
+  animation: fadeIn 1s ease-in;
 }
 
 .info-container {
@@ -196,22 +226,23 @@ p {
   bottom: 0px;
 }
 
-.play-again-container {
+.play-button-container {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
   width: 100%;
-  max-width: 270px;
+  max-width: 180px;
   border-radius: 8px;
   border: 2px solid #ffffff;
   padding: 30px 20px;
   color: #faebd7;
   text-align: center;
-  display: none;
   animation: fadeIn 1s ease-in;
+  cursor: pointer;
 }
+
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -225,7 +256,7 @@ p {
 
 
 
-@media (max-width: 500px) {
+@media (max-width: 880px) {
   .container {
     width: 100vw;
     height: 100vh;
@@ -234,7 +265,7 @@ p {
     transform: none;
     border-radius: 0px;
   }
-  
+
   .canvas {
     border-radius: 0px;
   }
@@ -269,7 +300,7 @@ p {
     border-radius: 3px;
   }
 
-  .play-again-container {
+  .play-button-container {
     max-width: 180px;
     padding: 20px 15px;
   }

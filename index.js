@@ -1,16 +1,19 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import openSimplexNoise from 'https://cdn.skypack.dev/open-simplex-noise';
 
-const container = document.querySelector('.container');
-const canvas    = document.querySelector('.canvas');
+const container           = document.querySelector('.container');
+const canvas              = document.querySelector('.canvas');
+const gameInfoEl          = document.querySelector('.game-info-container');
+const distanceEl          = document.querySelector('.distance');
+const hitPointsEl         = document.querySelector('.hit-points');
+const hitPointsProgressEl = document.querySelector('.hit-points-progress-bar');
+const playEl              = document.querySelector('.play-button-container');
 
 let
   sizes,
   scene,
   tilesScene,
   camera,
-  controls,
   renderer,
   noise2d,
   rocket,
@@ -41,19 +44,16 @@ let
   allPlanets,
   mousePos,
   distance,
-  distanceEl,
   hitPoints,
-  hitPointsEl,
   hitPointsProgress,
-  hitPointsProgressEl,
   asteroidSpeed,
   asteroidSpeedTimeout,
   collidedAsteroid,
   collisionPos,
   collisionPosReturning,
   collisionTimeout,
-  canPlayAgain,
-  playAgainEl;
+  firstTimeClickingPlay,
+  usingTouchScreen;
 
 const setScene = async () => {
 
@@ -82,7 +82,6 @@ const setScene = async () => {
   setAppValues();
   setTerrainValues();
   setPlanetValues();
-  createRocket();
   asteroidEngine();
   createInitTiles();
   createStars();
@@ -96,8 +95,8 @@ const setScene = async () => {
 const setAppValues = () => {
 
   sparkMeshes       = [];
-  flyingIn          = true;
-  rocketDown        = false;
+  flyingIn          = false;
+  rocketDown        = true;
   noise2d           = openSimplexNoise.makeNoise2D(Date.now());
   asteroidIDCounter = 0;
   allAsteroids      = [];
@@ -106,19 +105,16 @@ const setAppValues = () => {
     y: 0
   };
   distance                = 0;
-  distanceEl              = document.querySelector('.distance');
   hitPoints               = 1;
-  hitPointsEl             = document.querySelector('.hit-points');
   hitPointsEl.textContent = hitPoints;
   hitPointsProgress       = 0;
-  hitPointsProgressEl     = document.querySelector('.hit-points-progress-bar');
   asteroidSpeed           = 3000;
   collidedAsteroid        = new THREE.Group();
   collisionPos            = 0;
   collisionPosReturning   = false;
   collisionTimeout        = false;
-  canPlayAgain            = false;
-  playAgainEl             = document.querySelector('.play-again-container');
+  firstTimeClickingPlay   = true;
+  usingTouchScreen        = false;
 
 };
 
@@ -733,6 +729,31 @@ const resize = () => {
 
 };
 
+const play = () => {
+
+  playEl.style.display = 'none';
+
+  createRocket();
+
+  flyingIn      = true;
+  rocketDown    = false;
+  distance      = 0;
+  asteroidSpeed = 3000;
+  
+  hitPoints               = 1;
+  hitPointsEl.textContent = hitPoints;
+  
+  hitPointsProgress                 = 0;
+  hitPointsProgressEl.style.height  = `${hitPointsProgress}%`;
+
+  if(firstTimeClickingPlay) {
+    gameInfoEl.style.display        = 'flex';
+    firstTimeClickingPlay           = false;
+    playEl.children[0].textContent  = 'Play Again';
+  }
+
+};
+
 const mouseMove = (event) => {
 	
 	const tx = -1 + (event.clientX / window.innerWidth) * 2;
@@ -757,34 +778,23 @@ const touchMove = (event) => {
 
 };
 
-const playAgain = () => {
+const touchStart = () => {
 
-  if(!canPlayAgain) return;
+  resize();
 
-  createRocket();
-
-  playAgainEl.style.display = 'none';
-
-  canPlayAgain  = false;
-  flyingIn      = true;
-  rocketDown    = false;
-  distance      = 0;
-  asteroidSpeed = 3000;
-
-  hitPoints               = 1;
-  hitPointsEl.textContent = hitPoints;
-
-  hitPointsProgress                 = 0;
-  hitPointsProgressEl.style.height  = `${hitPointsProgress}%`;
+  usingTouchScreen = true;
+  document.removeEventListener('touchstart', touchStart, false);
 
 };
 
 const listenTo = () => {
 
   window.addEventListener('resize', resize.bind(this));
+  playEl.addEventListener('click', play.bind(this), false);
   document.addEventListener('mousemove', mouseMove.bind(this), false);
   document.addEventListener('touchmove', touchMove.bind(this), false);
-  document.addEventListener('click', playAgain.bind(this), false);
+  document.addEventListener('touchstart', touchStart, false);
+  
   
 };
 
@@ -877,6 +887,8 @@ const normalize = (pos, vmin, vmax, tmin, tmax) => {
 
 const updateRocket = () => {
 
+  if(firstTimeClickingPlay) return;
+
   if(rocketDown) {
 
     if(rocket.position.x > -120) {
@@ -886,15 +898,14 @@ const updateRocket = () => {
     }
     else {
       cleanUp(rocket);
-      playAgainEl.style.display = 'block';
-      canPlayAgain              = true;
+      playEl.style.display  = 'block';
     }
 
     return;
 
   }
 	
-	const targetX = normalize(mousePos.x, -1, 1, -40, 15);
+	const targetX = normalize(mousePos.x, -1, 1, usingTouchScreen ? -20 : -40, usingTouchScreen ? 0 : 15);
 	const targetY = normalize(mousePos.y, -1, 1, 190, 220);
 	const camZ    = normalize(mousePos.x, -1, 1, 55, 70);
 	const rotateY = normalize(mousePos.y, -1, 1, 0, 5);
