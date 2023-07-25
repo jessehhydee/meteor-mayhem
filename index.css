@@ -146,10 +146,7 @@ html, body {
 .game-info-container {
   width: 100%;
   max-width: fit-content;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  margin-left: env(safe-area-inset-right, 30px);
-  margin-right: env(safe-area-inset-right, 30px);
+  margin: 30px;
   position: absolute;
   top: 10px;
   left: 10px;
@@ -159,6 +156,14 @@ html, body {
   gap: 20px;
   display: none;
   animation: fadeIn 1s ease-in;
+}
+@supports (padding-left: env(safe-area-inset-left)) {
+  .game-info-container {
+    --safe-area-inset-left: env(safe-area-inset-left);
+    --safe-area-inset-right: env(safe-area-inset-right);
+    margin-left: calc(30px + var(--safe-area-inset-left));
+    margin-right: calc(30px + var(--safe-area-inset-right));
+  }
 }
 
 .info-container {
