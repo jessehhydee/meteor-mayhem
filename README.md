@@ -10,6 +10,6 @@ See how far you can get before the fog of asteroids take you out!
 
 ### Gameplay
 
-![alt text](https://github.com/jessehhydee/fly-by/blob/main/assets/screenshots/one.png?raw=true)
+![alt text](https://github.com/jessehhydee/meteor-mayhem/blob/main/assets/screenshots/one.pngraw=true)
 
-![alt text](https://github.com/jessehhydee/fly-by/blob/main/assets/screenshots/two.png?raw=true)
+![alt text](https://github.com/jessehhydee/meteor-mayhem/blob/main/assets/screenshots/two.png?raw=true)
