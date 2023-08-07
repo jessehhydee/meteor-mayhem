@@ -873,18 +873,6 @@ const checkCollisions = () => {
   
 };
 
-const normalize = (pos, vmin, vmax, tmin, tmax) => {
-
-	const nv = Math.max(Math.min(pos, vmax), vmin);
-	const dv = vmax - vmin;
-	const pc = (nv - vmin) / dv;
-	const dt = tmax - tmin;
-	const tv = tmin + (pc * dt);
-
-	return tv;
-
-};
-
 const updateRocket = () => {
 
   if(firstTimeClickingPlay) return;
@@ -905,10 +893,10 @@ const updateRocket = () => {
 
   }
 	
-	const targetX = normalize(mousePos.x, -1, 1, usingTouchScreen ? -20 : -40, usingTouchScreen ? 0 : 15);
-	const targetY = normalize(mousePos.y, -1, 1, 190, 220);
-	const camZ    = normalize(mousePos.x, -1, 1, 55, 70);
-	const rotateY = normalize(mousePos.y, -1, 1, 0, 5);
+	const targetX = THREE.MathUtils.mapLinear(mousePos.x, -1, 1.1, usingTouchScreen ? -20 : -40, usingTouchScreen ? 0 : 15);
+	const targetY = THREE.MathUtils.mapLinear(mousePos.y, -1, 1.1, 190, 220);
+	const camZ    = THREE.MathUtils.mapLinear(mousePos.x, -1, 1.1, 55, 70);
+	const rotateY = THREE.MathUtils.mapLinear(mousePos.y, -1, 1.1, 0, 5);
 
   rocket.position.x = targetX - collisionPos;
 	rocket.position.y = targetY + collisionPos;
